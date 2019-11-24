@@ -1,0 +1,17 @@
+{
+  "name": "classed-graphql",
+  "version": "1.0.0",
+  "description": "1. Create account with mongodb atlas via https://www.mongodb.com/cloud/atlas     1. Create DB user via security tab     2. Create a whitelist of IP via network access tab (We used any IP because we are just developing and residential tend to change)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.9.12",
+    "graphql": "^14.5.8",
+    "mongoose": "^5.7.12"
+  }
+}
