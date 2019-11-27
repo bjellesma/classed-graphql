@@ -24,9 +24,13 @@ module.exports = gql`
         getPosts: [
             Post
         ]
+        getPost(postId: ID!): Post
     }
+    # mutations are the functions of graphql
     type Mutation{
         register(registerInput: RegisterInput): User!
         login(username: String!, password: String!): User!
+        createPost(body: String!): Post!
+        deletePost(postId: ID!): String!
     }
 `

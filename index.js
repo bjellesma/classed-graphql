@@ -12,7 +12,9 @@ const {MONGODB} = require('./config')
 //init the server with the graphql types and resolvers
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    //we want to take in a context object to get access to the headers
+    context: ({ req }) => ({ req })
 })
 
 //connect to database and then start server
