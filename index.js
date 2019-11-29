@@ -1,6 +1,8 @@
-const {ApolloServer} = require('apollo-server')
+const {ApolloServer,PubSub} = require('apollo-server')
 const gql = require('graphql-tag')
 const mongoose = require('mongoose')
+
+const pubsub = new PubSub()
 
 
 const typeDefs = require('./graphql/typeDefs')
@@ -14,7 +16,7 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     //we want to take in a context object to get access to the headers
-    context: ({ req }) => ({ req })
+    context: ({ req }) => ({ req, pubsub })
 })
 
 //connect to database and then start server

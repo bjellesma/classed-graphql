@@ -1,4 +1,4 @@
-const {AuthenticationError} = require('apollo-server')
+const {AuthenticationError,UserInputError} = require('apollo-server')
 const Posts = require('../../models/Posts')
 const checkAuth = require('../../util/check_auth')
 
@@ -41,6 +41,11 @@ module.exports = {
 
             const post = await newPost.save()
 
+            //create a new subscription to be pushed out
+            context.pubsub.publish('NEW_POST', {
+                newPost: post
+            })
+
             return post;
         },
         async deletePost(_, {postId}, context){
@@ -58,6 +63,41 @@ module.exports = {
             }catch(err){
                 throw new Error(err)
             }
+        },
+        async likePost(_, {postId}, context){
+            const {username} = checkAuth(context);
+
+            const post = await Posts.findById(postId)
+            if(post){
+                //if the like given belongs to the user
+                //if the post is liked, unlike it
+                if(post.likes.find(like => like.username === username)){
+
+                    //splice off the like that is ours
+                    // post.likes = post.likes.filter(like => like.username !== username)
+                    const likeIndex = post.likes.findIndex(like => like.username === username)
+                    post.likes.splice(likeIndex, 1)
+                    await post.save()
+                }else{
+                    //add a like onto the post
+                    post.likes.push({
+                        username,
+                        createdAt: new Date().toISOString()
+                    })
+                }
+
+                await post.save()
+                return post
+            }
+            else{
+                throw new UserInputError('Post not found')
+            } 
+        }
+    },
+    Subscription: {
+        newPost: {
+            //pubsub is the third arg because it belongs to the context object
+            subscribe: (_, __, {pubsub}) => pubsub.asyncIterator('NEW_POST')
         }
     }
 }
